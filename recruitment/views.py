@@ -83,6 +83,8 @@ def create_post(request):
             return redirect('posts')
           elif response['success'] == True:
             if response["cv_file"]["id"]:
+              tsync_id = response["tsync_id"]
+              payload["tsync_id"] = tsync_id
               cv_file_token_id = response["cv_file"]["id"]
               payload["cv_file_token_id"] =  cv_file_token_id
               print(payload)
