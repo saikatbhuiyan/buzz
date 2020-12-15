@@ -222,19 +222,18 @@ def upload_file(request, pk):
     if request.method == 'POST':
       try:
         file = request.FILES['file']
+        print(file)
         fs = FileSystemStorage()
         filename = fs.save(file.name, file)
+        print(filename)        
         url = fs.url(filename)
+        print(url)        
         file_type = filename.split('.')[-1]
         if str(file_type) == "pdf":
             if file.size < 400000 :
                 file_id = post.cv_file_token_id
-                print(file_id)
-                FILE_URL = f"{BASE_URL}/api/file-object/{file_id}/"
-                headers={ 'Content-Type'  : 'application/x-www-form-urlencoded; charset=UTF-8', 'Authorization': f'Token {token}'}
-                payload = {
-                  "file": file
-                }
+                FILE_URL = f"https://recruitment.fisdev.com/api/file-object/{file_id}/"
+                headers={ 'Content-Type'  : 'multipart/form-data; boundary=something', 'Authorization': f'Token {token}'}
                 response = requests.put(FILE_URL, headers=headers, data=filename)
                 response = response.json()
                 if response['success'] == False:
@@ -244,7 +243,7 @@ def upload_file(request, pk):
 
                 elif response['success'] == True:
 
-                  cv = Cv(apply_id=483, file=file)
+                  cv = Cv(apply_id=file_id, file=file)
                   cv.save()
                   messages.success(request, "Your request successfully send.")
                   return redirect('posts')
